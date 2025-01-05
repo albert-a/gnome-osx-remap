@@ -12,7 +12,8 @@ Special tool is installed alongside the service, so that the other users can con
 
 ```
 git clone https://github.com/albert-a/gnome-osx-remap
-gnome-osx-remap/install
+cd gnome-osx-remap
+./install
 ```
 
 3. Restart your computer.
@@ -21,7 +22,7 @@ gnome-osx-remap/install
 
 1. If repository was removed, check it out again. Navigate into the program directory in Terminal and run:
 ```
-gnome-osx-remap/uninstall
+./uninstall
 ```
 
 2. Restart your computer.
