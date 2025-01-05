@@ -1,0 +1,124 @@
+# WARNING!!! Don't edit this file, it will be overwitten on next install.
+# You can copy and edit OR include and extend this profile from your own.
+
+shared:
+  terminals: &terminals # The & Symbol marks this entry as a Anchor
+    - org.gnome.Terminal
+    - org.gnome.Console
+    - org.gnome.Ptyxis
+
+keypress_delay_ms: 10
+
+virtual_modifiers:
+  - Fn
+
+# `modmap` section - For key-to-key remapping (no combinations). Remapping a key to a modifiers here
+modmap:
+  - name: Swap ⌘ and Ctrl
+    remap:
+      LeftCtrl: LeftMeta
+      LeftMeta: LeftCtrl
+      RightCtrl: RightMeta
+      RightMeta: RightCtrl
+
+# `keymap` section - For remapping a sequence of key combinations to another sequence of key combinations
+keymap:
+  - name: Global mappings
+    remap:
+      # Remap some shortcuts back between ⌘ and Ctrl
+      Super-Alt-Delete: Ctrl-Alt-Delete
+      # Window Manager
+      Super-Up: Super-Alt-Up
+      Super-Down: Super-Alt-Down
+      # Tab navigation
+      Shift-Ctrl-LeftBrace: Ctrl-PageUp
+      Shift-Ctrl-RightBrace: Ctrl-PageDown
+      # Map undetectable or used shortcuts to spare keystrokes that will be mapped in Gnome to appropriate actions
+      Super-Fn-F: Shift-Ctrl-Alt-Super-F
+      Super-Fn-C: Shift-Ctrl-Alt-Super-C
+      Fn-C: Shift-Alt-Super-C
+      Ctrl-D: Shift-Ctrl-Alt-Super-D
+      # Editting (global)
+      Ctrl-Left: Home
+      Ctrl-Right: End
+      Ctrl-Up: Ctrl-Home
+      Ctrl-Down: Ctrl-End
+  - name: Editting (except terminals)
+    application:
+      not: *terminals
+    remap:
+      Alt-Backspace: Ctrl-Backspace
+      Alt-Left: Ctrl-Left
+      Alt-Right: Ctrl-Right
+  - name: Nautilus (Files) shortcuts
+    application:
+      only: org.gnome.Nautilus
+    remap:
+      Ctrl-Up: Alt-Up          # Go Up
+      Ctrl-Down: Enter         # Go Down. Using `Enter` here because `Alt-Down` does not open files, only goes down.
+      Ctrl-Backspace: Delete   # Move to Trash
+      Shift-Ctrl-Dot: Ctrl-H   # Show/Hide Hidden Files
+      Shift-Ctrl-G: Ctrl-L     # Enter Location
+  - name: Terminal copy and paste and window management
+    application:
+      only: org.gnome.Terminal
+    remap:
+      Ctrl-C: Shift-Super-C
+      Ctrl-V: Shift-Super-V
+      Ctrl-T: Shift-Super-T
+      Ctrl-N: Shift-Super-N
+      Ctrl-W: Shift-Super-W
+      Ctrl-Q: Shift-Super-Q
+      Ctrl-F: Shift-Super-F
+  - name: Console and Ptyxis shortcuts
+    application:
+      only: [org.gnome.Console, org.gnome.Ptyxis]
+    remap:
+      Ctrl-C: Ctrl-Shift-C # Copy text
+      Ctrl-V: Ctrl-Shift-V # Paste text
+      Ctrl-N: Ctrl-Shift-N # New window
+      Ctrl-Q: Ctrl-Shift-Q # Close window
+      Ctrl-T: Ctrl-Shift-T # New tab
+      Ctrl-W: Ctrl-Shift-W # Close tab
+      Ctrl-F: Shift-Ctrl-F # Find
+  - name: Terminal and Console - make Ctrl work in Terminal # keycombiner.com/collections/nano/
+    application:
+      only: *terminals
+    remap:
+      Alt-Backspace: Ctrl-W
+      Super-Ctrl-F: F11
+      Super-Q: Ctrl-Q
+      Super-W: Ctrl-W
+      Super-E: Ctrl-E
+      Super-R: Ctrl-R
+      Super-T: Ctrl-T
+      Super-Y: Ctrl-Y
+      Super-U: Ctrl-U
+      Super-I: Ctrl-I
+      Super-O: Ctrl-O
+      Super-P: Ctrl-P
+      Super-LeftBrace: Ctrl-LeftBrace
+      Super-RightBrace: Ctrl-RightBrace
+      Super-A: Ctrl-A
+      Super-S: Ctrl-S
+      Super-D: Ctrl-D
+      Super-F: Ctrl-F
+      Super-G: Ctrl-G
+      Super-H: Ctrl-H
+      Super-J: Ctrl-J
+      Super-K: Ctrl-K
+      Super-L: Ctrl-L
+      Super-Z: Ctrl-Z
+      Super-X: Ctrl-X
+      Super-C: Ctrl-C
+      Super-V: Ctrl-V
+      Super-B: Ctrl-B
+      Super-N: Ctrl-N
+      Super-M: Ctrl-M
+      Super-Slash: Ctrl-Slash
+  - name: Eclipse context assist and switch header/source
+    application:
+      only: Eclipse
+    remap:
+      Super-Space: Alt-Space
+      Super-Tab: Alt-Tab

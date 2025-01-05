@@ -1,0 +1,1 @@
+ALL ALL= NOPASSWD: $INSTALL_DIR/bin/${PACKAGE_NAME}-ctl --sudo *

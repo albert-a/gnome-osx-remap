@@ -1,0 +1,133 @@
+#!/bin/bash
+
+export PACKAGE_DESCRIPTION="GNOME to OSX keyboard remapper"
+export PACKAGE_NAME=gnome-osx-remap
+export INSTALL_DIR=/usr/local
+export CONFIG_DIR=/etc/$PACKAGE_NAME
+
+BASE_DIR=`cd "${0%/*}"; pwd`
+ARCH=`uname -m`
+COLOR_RED=`tput setaf 1`
+COLOR_RESET=`tput sgr0`
+
+die() { echo "${0##*/}: $1" >&2; exit 1; }
+msg() { echo "INFO: $1"; }
+install_dir() {
+    local src dst
+    [[ $UNINSTALL ]] || sudo mkdir -p "$3"
+    for src in "$2"/*; do
+        dst=${src##*/}
+        dst=$3/${dst/PACKAGE_NAME/$PACKAGE_NAME}
+        if  [[ -d $src ]] then
+            install_dir "$1" "$src" "$dst"
+            [[ $INSTALL ]] || RMDIRS+=( "$dst" )
+        elif [[ $INSTALL ]]; then
+            envsubst '$PACKAGE_DESCRIPTION$PACKAGE_NAME$CONFIG_DIR$INSTALL_DIR' < "$src" | sudo install -m "$1" /dev/stdin "$dst"
+        else
+            REMOVE+=( "$dst" )
+        fi
+    done
+}
+
+manager() {
+    local ACTION=$1 Handling=${1^}ing REMOVE RMDIRS INSTALL UNINSTALL
+
+    [[ $ACTION =~ ^(install|uninstall)$ ]] && (( ${ACTION^^} = 1 )) || die "Unkown command: $ACTION"
+    set -e
+    set -o pipefail
+    shopt -s nullglob
+
+    msg "$Handling xremap..."
+    . /etc/os-release
+    case $ID_LIKE in
+    fedora)
+        if  [[ $INSTALL ]] && ! which xremap &>/dev/null; then
+            sudo dnf -qy copr enable blakegardner/xremap
+            sudo dnf -qy install xremap-gnome
+        elif [[ $UNINSTALL ]] && which xremap &>/dev/null; then
+            sudo dnf -qy remove xremap-gnome
+            sudo dnf -qy copr disable blakegardner/xremap
+        fi
+        ;;
+    *)  if  [[ $INSTALL ]]; then
+            [ "$ARCH" = x86_64 -o "$ARCH" = aarch64 ] || die "Unsupported architecture: '$ARCH'"
+            case $XDG_SESSION_TYPE in
+            x11)     ARCHIVE_NAME="xremap-linux-${ARCH}-x11.zip";;
+            wayland) ARCHIVE_NAME="xremap-linux-${ARCH}-gnome.zip";;
+            *)       die "Unsupported compositor: '$XDG_SESSION_TYPE'";;
+            esac
+            curl -fsSL https://github.com/xremap/xremap/releases/latest/download/"$ARCHIVE_NAME" \
+                | zcat | sudo install -m 755 /dev/stdin "$INSTALL_DIR"/bin/xremap
+        else
+            REMOVE+=( "$INSTALL_DIR"/bin/xremap )
+        fi
+        ;;
+    esac
+
+    msg "$Handling config files..."
+    install_dir 644 "$BASE_DIR"/etc "$CONFIG_DIR"
+    install_dir 640 "$BASE_DIR"/sudoers.d /etc/sudoers.d
+    RMDIRS+=( "$CONFIG_DIR" )
+
+    msg "$Handling binary files..."
+    install_dir 755 "$BASE_DIR"/bin "$INSTALL_DIR"/bin
+
+    msg "Configuring DBUS..."
+    add_script='s|^(\s*)<policy context="default">|&\n\1  <allow user="root"/><!--xremap-->|'
+    [[ $UNINSTALL ]] || sudo sed -ri "/--xremap--/d;$add_script" /usr/share/dbus-1/session.conf
+
+    msg "$Handling systemd service..."
+    install_dir 644 "$BASE_DIR"/system /etc/systemd/system
+    sudo systemctl daemon-reload
+    if [[ $INSTALL ]]; then
+        sudo systemctl -q enable $PACKAGE_NAME
+        sudo systemctl -q restart $PACKAGE_NAME
+    elif systemctl cat $PACKAGE_NAME &>/dev/null; then
+        sudo systemctl -q disable --now $PACKAGE_NAME
+    fi
+
+    case $XDG_SESSION_TYPE in
+    wayland)
+        msg "$Handling gnome extension..."
+        EXTPATH=/usr/share/gnome-shell/extensions/xremap@k0kubun.com
+        sudo rm -rf "$EXTPATH" /etc/dconf/db/local.d/00-extensions
+        if  [[ $INSTALL ]]; then
+            [[ -e $EXTPATH ]] || sudo git clone -q https://github.com/xremap/xremap-gnome "$EXTPATH"
+            sudo tee /etc/dconf/db/local.d/00-extensions >/dev/null <<-EOF
+		[org/gnome/shell]
+		enabled-extensions=['xremap@k0kubun.com']
+		EOF
+        fi
+        sudo dconf update
+        ;;
+    x11)
+        msg "$Handling server access control for X11, https://github.com/k0kubun/xremap#x11"
+        if [[ $INSTALL ]]
+        then xhost +SI:localuser:root
+        else xhost -SI:localuser:root
+        fi
+        ;;
+    esac
+
+    if  [[ $INSTALL ]]; then
+        msg "Loading keybindings..."
+        ${PACKAGE_NAME}-ctl load
+        # Restart is required in order for the changes in the `/usr/share/dbus-1/session.conf` to take place
+        msg "Done! ${COLOR_RED}Action Required${COLOR_RESET}. Please restart your PC."
+    else
+        msg "Resetting keybindings..."
+        if which "${PACKAGE_NAME}"-ctl &>/dev/null; then
+            ${PACKAGE_NAME}-ctl unload
+        fi
+        msg "Removing files..."
+        sudo rm -rf "${REMOVE[@]}"
+        echo "RMDIRS: ${RMDIRS[*]}"
+        sudo rmdir  "${RMDIRS[@]}" 2>/dev/null || true
+        msg "Uninstall completed"
+    fi
+}
+
+manager ${0##*/}
+
+#sudo systemd-run --quiet --pipe --wait --user --machine 1000@.host busctl --user call org.gnome.Shell /com/k0kubun/Xremap com.k0kubun.Xremap WMClass
+#gnome-extensions enable xremap@k0kubun.com

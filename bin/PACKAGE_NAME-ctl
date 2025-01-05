@@ -1,0 +1,24 @@
+#!/bin/bash
+
+die() { echo "${0##*/}: $1" >&2; exit 1; }
+become_root() { (( ! UID )) || exec sudo $0 --sudo "${ARGS[@]}"; }
+forbid_sudo() { (( ! WITH_SUDO )) || die "Privileges escalation is not allowed for command: ${ARGS[*]}"; }
+
+[[ $1 == --sudo ]] && shift && WITH_SUDO=1 || WITH_SUDO=
+ARGS=( "$@" )
+
+case $#-$1 in
+1-start|1-stop|1-restart|1-status)
+    become_root
+    systemctl $1 $PACKAGE_NAME.service
+    ;;
+[12]-load|[12]-unload)
+    forbid_sudo
+    file=$CONFIG_DIR/factory/${2:-default}.dconf
+    if [[ $1 == load ]]
+    then cat "$file"
+    else sed "s/=.*/=0/" "$file"
+    fi | dconf load /org/gnome/
+    ;;
+*) die "Usage: ${0##*/} { start | stop | status | load [PROFILE] | unload [PROFILE] }"
+esac

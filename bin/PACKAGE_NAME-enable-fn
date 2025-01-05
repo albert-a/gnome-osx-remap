@@ -1,0 +1,12 @@
+#!/bin/bash
+
+sudo tee /sys/module/hid_apple/parameters/fnmode <<< "2"
+sudo tee /etc/modprobe.d/hid_apple.conf <<< "options hid_apple fnmode=2"
+
+if   which dracut &>/dev/null; then
+     sudo dracut --regenerate-all --force
+elif which update-initramfs &>/dev/null
+     sudo update-initramfs -u
+else
+     echo "Please update initramfs, for changes to take effect"
+fi

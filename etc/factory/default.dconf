@@ -1,0 +1,44 @@
+# WARNING!!! Don't edit this file, it will be overwitten on next install.
+# You can copy and edit OR include and extend this profile from your own.
+
+[desktop/input-sources]
+xkb-options=0
+
+[desktop/wm/keybindings]
+maximize=['<Shift><Control><Alt><Super>f']
+unmaximize=['<Shift><Control><Alt><Super>c']
+show-desktop=['<Shift><Control><Alt><Super>d']
+switch-applications=['<Control>Tab']
+switch-applications-backward=['<Shift><Control>Tab']
+switch-group=['<Control>grave']
+switch-group-backward=['<Shift><Control>grave']
+switch-input-source=['<Control>space']
+switch-input-source-backward=['<Shift><Control>space']
+# free Super-Home for toggle-tiled-left below
+switch-to-workspace-1=@as []
+# free Super-End for toggle-tiled-right below
+switch-to-workspace-last=@as []
+switch-to-workspace-left=['<Super>Left']
+switch-to-workspace-right=['<Super>Right']
+toggle-fullscreen=['<Control><Super>f']
+
+[mutter]
+overlay-key=''
+
+[mutter/keybindings]
+toggle-tiled-left=['<Super>Home']
+toggle-tiled-right=['<Super>End']
+
+[settings-daemon/plugins/media-keys]
+magnifier=@as []
+screenreader=@as []
+screensaver=['MenuKB']
+
+[shell/keybindings]
+screenshot=['<Shift><Control>3']
+screenshot-window=['<Shift><Control>5']
+show-screenshot-ui=['<Shift><Control>4']
+toggle-application-view=['<Super>space']
+toggle-message-tray=@as []
+toggle-overview=['LaunchA']
+toggle-quick-settings=['<Shift><Alt><Super>c']
