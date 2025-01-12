@@ -59,34 +59,31 @@ keymap:
       Ctrl-Backspace: Delete   # Move to Trash
       Shift-Ctrl-Dot: Ctrl-H   # Show/Hide Hidden Files
       Shift-Ctrl-G: Ctrl-L     # Enter Location
-  - name: Terminal copy and paste and window management
+  - name: Gnome Terminal Tuning
     application:
       only: org.gnome.Terminal
     remap:
-      Ctrl-C: Shift-Super-C
-      Ctrl-V: Shift-Super-V
-      Ctrl-T: Shift-Super-T
-      Ctrl-N: Shift-Super-N
-      Ctrl-W: Shift-Super-W
-      Ctrl-Q: Shift-Super-Q
-      Ctrl-F: Shift-Super-F
-  - name: Console and Ptyxis shortcuts
+      Ctrl-Q: Ctrl-Shift-Q # Close window
+      Ctrl-C: Super-C      # Copy
+      Ctrl-G: Shift-Ctrl-G # Find Next
+      Ctrl-H: Shift-Ctrl-H # Find Previous
+      Ctrl-J: Shift-Ctrl-J # Clear Highlight
+  - name: Terminals # See also: keycombiner.com/collections/nano/
     application:
-      only: [org.gnome.Console, org.gnome.Ptyxis]
+      only: *terminals
     remap:
       Ctrl-C: Ctrl-Shift-C # Copy text
       Ctrl-V: Ctrl-Shift-V # Paste text
       Ctrl-N: Ctrl-Shift-N # New window
-      Ctrl-Q: Ctrl-Shift-Q # Close window
       Ctrl-T: Ctrl-Shift-T # New tab
       Ctrl-W: Ctrl-Shift-W # Close tab
+      Ctrl-O: Ctrl-Shift-O # Tabs overview
       Ctrl-F: Shift-Ctrl-F # Find
-  - name: Terminal and Console - make Ctrl work in Terminal # keycombiner.com/collections/nano/
-    application:
-      only: *terminals
-    remap:
-      Alt-Backspace: Ctrl-W
-      Super-Ctrl-F: F11
+      Shift-Ctrl-Super-LeftBrace: Shift-Ctrl-PageUp    # Move tab left
+      Shift-Ctrl-Super-RightBrace: Shift-Ctrl-PageDown # Move tab right
+      Alt-Backspace: Ctrl-W # Remove word
+      Super-Ctrl-F: F11     # Full screen
+      # Make Ctrl work:
       Super-Q: Ctrl-Q
       Super-W: Ctrl-W
       Super-E: Ctrl-E

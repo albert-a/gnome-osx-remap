@@ -25,9 +25,10 @@ tile last 3 windows: Fn-Ctrl-Shift-Alt + Arrows
 ----------------------------------
 # Some notes for me:
 Move to another worcspace MacOS: https://konradstaniszewski.com/blog/windows-between-spaces
+GTK4 Keyboard Layout issue: https://gitlab.gnome.org/GNOME/gtk/-/issues/5384
+xremap issue: https://github.com/xremap/xremap/issues/570
 
 Alt Esc -> Cycle windows
 Alt F6 -> Switch windows of an app directly
 Alt F10 -> Toggle maximized
 Ctrl Space -> Launchpad
-

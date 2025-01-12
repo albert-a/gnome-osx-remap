@@ -66,7 +66,7 @@ manager() {
 
     msg "$Handling config files..."
     install_dir 644 "$BASE_DIR"/etc "$CONFIG_DIR"
-    install_dir 640 "$BASE_DIR"/sudoers.d /etc/sudoers.d
+    install_dir 640 "$BASE_DIR"/src/sudoers.d /etc/sudoers.d
     RMDIRS+=( "$CONFIG_DIR" )
 
     msg "$Handling binary files..."
@@ -77,7 +77,7 @@ manager() {
     [[ $UNINSTALL ]] || sudo sed -ri "/--xremap--/d;$add_script" /usr/share/dbus-1/session.conf
 
     msg "$Handling systemd service..."
-    install_dir 644 "$BASE_DIR"/system /etc/systemd/system
+    install_dir 644 "$BASE_DIR"/src/system /etc/systemd/system
     sudo systemctl daemon-reload
     if [[ $INSTALL ]]; then
         sudo systemctl -q enable $PACKAGE_NAME
@@ -121,7 +121,6 @@ manager() {
         fi
         msg "Removing files..."
         sudo rm -rf "${REMOVE[@]}"
-        echo "RMDIRS: ${RMDIRS[*]}"
         sudo rmdir  "${RMDIRS[@]}" 2>/dev/null || true
         msg "Uninstall completed"
     fi
@@ -129,5 +128,4 @@ manager() {
 
 manager ${0##*/}
 
-#sudo systemd-run --quiet --pipe --wait --user --machine 1000@.host busctl --user call org.gnome.Shell /com/k0kubun/Xremap com.k0kubun.Xremap WMClass
-#gnome-extensions enable xremap@k0kubun.com
+#systemd-run --quiet --pipe --wait --user --machine 1000@.host busctl --user call org.gnome.Shell /com/k0kubun/Xremap com.k0kubun.Xremap WMClass

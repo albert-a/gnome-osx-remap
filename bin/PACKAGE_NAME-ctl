@@ -22,3 +22,5 @@ case $#-$1 in
     ;;
 *) die "Usage: ${0##*/} { start | stop | status | load [PROFILE] | unload [PROFILE] }"
 esac
+
+#gnome-extensions enable xremap@k0kubun.com
