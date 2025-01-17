@@ -21,12 +21,13 @@ cd gnome-osx-remap
 ## How to uninstall
 
 1. If repository was removed, check it out again. Navigate into the program directory in Terminal and run:
+
 ```
 ./uninstall
 ```
 
 2. Restart your computer.
 
-## Logbook
+## Changelog
 
 `Jan 06, 2025` • Initial commit. Based on this excellent project: [GNOME macOS Keyboard Remap for Wayland](https://github.com/petrstepanov/gnome-macos-remap-wayland)

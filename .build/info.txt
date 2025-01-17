@@ -1,0 +1,4 @@
+Alt Esc -> Cycle windows
+Alt F6 -> Switch windows of an app directly
+Alt F10 -> Toggle maximized
+Ctrl Space -> Launchpad
